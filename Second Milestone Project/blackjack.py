@@ -4,7 +4,7 @@ This is the main blackjack class
 from deck import Deck
 from player import Player
 import random
-
+from hand import Hand
 class BlackJack:
 
     def __init__(self, player):
@@ -12,76 +12,82 @@ class BlackJack:
         self.player = player
 
     def play(self):
-        used_cards = []
-        unused_cards = self.deck
+        self.deck = Deck()
+        self.deck.shuffle_deck()
         
         while self.player._balance > 0:
             player_answer = input("Would u like to play a game of blackjack? [YES/NO]: ")
             while player_answer != 'YES' and  player_answer != 'NO':
                 player_answer = input("Please enter a YES or NO ")
             if player_answer == 'YES':
-                bet_amount = int(input(f"Place a bet. Your balance is {self.player._balance}. "))
-                while bet_amount>self.player._balance:
-                    bet_amount = int(input(f"Please place a valid bet. Your balance is {self.player._balance}."))
+                bet_amount = 0
+                while True:
+                    balance = player.get_balance()
+                    try:
+                        bet_amount = int(input("Please enter a bet! "))
+                        
+                        if bet_amount<balance:
+                            break
+                    except ValueError:
+                        print(f"The bet must be an integer in the range [0,{balance}] ")
+
+                player.bet(bet_amount)
                 
-                if self.player.bet(bet_amount) == 1:
-                    player_points = 0
-                    dealer_points = 0
-                    unused_cards.add_cards(used_cards)
-                    unused_cards.shuffle_deck()
-                    used_cards = []
-                    print(unused_cards)
-                    used_cards.append(unused_cards.draw_a_card())
-                    player_points += used_cards[-1].get_value()
-                    used_cards.append(unused_cards.draw_a_card())
-                    dealer_points += used_cards[-1].get_value()
-                    used_cards.append(unused_cards.draw_a_card())
-                    player_points += used_cards[-1].get_value()
-                    used_cards.append(unused_cards.draw_a_card())
-                    dealer_points += used_cards[-1].get_value()
-                    
-                    print(unused_cards)
-                    print(f"Your hand is: {used_cards[0].__str__()}, {used_cards[2].__str__()}. You have {player_points} points")
-                    print(f"The dealers hand is: {used_cards[1].__str__()}, {used_cards[3].__str__()}. The dealer has {dealer_points} points")
-                    while input("HIT OR STAND? ") == "HIT" and player_points<21:
-                        card_added = unused_cards.draw_a_card()
-                        used_cards.append(card_added)
-                        player_points += card_added.get_value()
-                        print(f"You draw {card_added.__str__()}. You have {player_points} points")
-
-                    # Dealer Loop
-                    while dealer_points<17:
-                        card_added = unused_cards.draw_a_card()
-                        used_cards.append(card_added)
-                        dealer_points += card_added.get_value()
-                        print(f"Dealer draws {card_added.__str__()}. The dealer has {dealer_points} points")
-
-                    if player_points > 21:
-                        print("BUST you went over 21. Better luck next time!")
-
-                    elif dealer_points > 21:
-                        print("The dealaer busted you win 2x your bet")
-                        self.player.add_funds(2*bet_amount)
-
-                    elif player_points == 21 and dealer_points == 21:
-                        print("PUSH both you and the dealer got a blackjack! You get back your original bet ")
-                        self.player.add_funds(bet_amount)
-
-                    elif player_points == 21:
-                        print("BLACKJACK you win 3x your bet!")
-                        self.player.add_funds(3*bet_amount)
-
-                    elif player_points < 21 and player_points>dealer_points:
-                        print("You are closer to 21 than the dealer! You win 2x your bet")
-                        self.player.add_funds(2*bet_amount)
-
+                player_hand = Hand()
+                dealer_hand = Hand()
+                
+                player_hand.add_card(self.deck.draw_a_card())
+                dealer_hand.add_card(self.deck.draw_a_card())
+                player_hand.add_card(self.deck.draw_a_card())
+                dealer_hand.add_card(self.deck.draw_a_card())
+                
+                player_hand.show_cards()
+                dealer_hand.show_cards(hide_one = True, who='dealer')
+                while player_hand.value<21:
+                    hit_or_stand = input("HIT OR STAND? [HIT/STAND] ")
+                    if hit_or_stand == "STAND":
+                        break
+                    elif hit_or_stand == 'HIT':
+                        player_hand.add_card(self.deck.draw_a_card())
+                        player_hand.adjust_for_aces()
+                        player_hand.show_cards()
                     else:
-                        print("You lose! Better luck next time!")
-        print(f"You walk out of the casino with {self.player._balance}$")
-player = Player('gegata', 500)
-game = BlackJack(player)
-try:
-    game.play()
+                        continue
 
-except KeyboardInterrupt:
-    print("Game ended using keyboard interrupt")
+                if player_hand.value<=21:
+                    while dealer_hand.value<17:
+                        dealer_hand.add_card(self.deck.draw_a_card())
+                        dealer_hand.adjust_for_aces()
+                        dealer_hand.show_cards(hide_one = True, who='dealer')
+                    dealer_hand.show_cards(who = "Dealer")
+
+                    if player_hand.value == 21 and dealer_hand.value == 21:
+                        print("Its a push you gain your original bet")
+                        player.add_funds(bet_amount)
+
+                    if player_hand.value == 21:
+                        print("Its a blackjack! You win 3x your bet")
+                        player.add_funds(3*bet_amount)
+
+                    if player_hand.value<21 and player_hand.value>dealer_hand.value:
+                        print("You are closer to 21! You win 2x your bet")
+                        player.add_funds(2*bet_amount)
+
+                    if player_hand.value<21 and player_hand.value<dealer_hand.value:
+                        print('The dealer is closer to 21! You lose your bet.')
+                    
+                else:
+                    print("You bust! You lose your bet")
+            else:
+                break
+                
+        print(f"You walk out of the casino with {self.player._balance}$")
+
+if __name__ == "__main__":        
+    player = Player('gegata', 500)
+    game = BlackJack(player)
+    try:
+        game.play()
+
+    except KeyboardInterrupt:
+        print("Game ended using keyboard interrupt")

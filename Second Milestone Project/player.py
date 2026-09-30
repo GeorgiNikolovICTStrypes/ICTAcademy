@@ -1,7 +1,6 @@
 """
 A player class for the blackjack project
 """
-
 class Player:
 
     def __init__(self, name, balance):
