@@ -5,3 +5,7 @@ class Captcha:
         raise NotImplementedError
     def check(self):
         raise NotImplementedError
+    def display(self, parent):
+        raise NotImplementedError
+    def get_answer(self):
+        raise NotImplementedError
