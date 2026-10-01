@@ -1,0 +1,4 @@
+This is some text
+I want to see if we concat
+All the lines in this text file
+And if we can then run them through our huffman tree!
