@@ -18,7 +18,7 @@ class HuffmanTree:
         self.data = data
         if self.data:
             self.build_tree(self.data)
-        self._get_encoding()
+        self.__get_encoding()
         
     def get_frequency_map(self, data):
         """
@@ -64,7 +64,7 @@ class HuffmanTree:
             helper(temp.right)
         helper(self.root)
 
-    def _get_encoding(self):
+    def __get_encoding(self):
         """
         Traverses the tree and gets the code for each character go left = add '0' to the code go right and add '1' to the code.
         """
@@ -88,7 +88,7 @@ class HuffmanTree:
         Returns the huffman code for each character in the text.
         Output: codes (dict) - A dictionary with pairs char: code
         """
-        self._get_encoding()
+        self.__get_encoding()
         return self.codes
 
     def serialize(self):
@@ -112,7 +112,7 @@ class HuffmanTree:
         
         _serialize_helper(self.root)
         bit_string = "".join(b for b in bits)
-        byte_string, _ = self._bitstring_to_bytestring(bit_string)
+        byte_string, _ = self.bitstring_to_bytestring(bit_string)
         return byte_string
         
     @classmethod
@@ -124,7 +124,7 @@ class HuffmanTree:
         Output:
          HuffmanTree: returns a new instance of the HuffmanTree class with root set to the root of the deserialized tree.
         """
-        bitstring = cls._bytestring_to_bitstring(bytes)
+        bitstring = cls.bytestring_to_bitstring(bytes)
         print(bitstring)
         cursor = 0
         def deserialize_helper():
@@ -188,7 +188,7 @@ class HuffmanTree:
         return decoded_chars
     
     @staticmethod
-    def _bitstring_to_bytestring(bitstring):
+    def bitstring_to_bytestring(bitstring):
         """
         Args:
           bitstring (string): binary string
@@ -201,7 +201,7 @@ class HuffmanTree:
         byte_string = bytes(int(bitstring[i:i+8],2) for i in range(0,len(bitstring),8))
         return byte_string, padding
     @staticmethod
-    def _bytestring_to_bitstring(bytestring):
+    def bytestring_to_bitstring(bytestring):
         """
         Args:
           bytestring (string): byte string
