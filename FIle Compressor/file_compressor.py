@@ -23,8 +23,7 @@ def compress_file(file_path, destination):
     compressed_data = header_len + header + padding_byte + body
     
     name_of_file = file_path.split('\\')[-1]
-    parts = name_of_file.partition('.')
-    new_name = parts[0]+parts[1] + 'huff'
+    new_name = name_of_file + '.huff'
     output_path = os.path.join(destination, new_name)
     if _confirm_overwrite(output_path):
         with open(output_path, 'wb') as f:
@@ -59,7 +58,11 @@ def decompress_file(file_path, destination):
 
 def compress_foulder(source, target = None):
     """
-    
+    Args:
+      source (string): source filepath
+      target (string): target filepath, default = None
+    Compresses a fouder to an archived one by mirroring the source dir structure and compresses the files in the dirs
+    Outputs: None
     """
     if target is None: # if the target is not passed a new one is created with the same name + _archived suffix
         target = f"{source}_archived"
@@ -67,25 +70,51 @@ def compress_foulder(source, target = None):
     for root, _ , files in os.walk(source): # for each root dir, subdirs and files
         rel_path = os.path.relpath(root, source) # caulcuate the rel path from root dir to source
         # A new dir is created for each subdir in source
-        if rel_path == "": # root == source <-> rel_path == ""
+        if rel_path == ".": # root == source <-> rel_path == "."
             target_directory = target
         else:
             target_directory = os.path.join(target,rel_path)  
 
         os.makedirs(target_directory, exist_ok=True)
+        print(target_directory)
         # For every file
         for file in files:
             # The path is from curr dir + file
             source_file_path = os.path.join(root, file)
-            # The new file is named file.huff and the dir is target_dir + filename. we compress it and send it there.
-            target_file_name = f"{file}.huff"
-            target_file_path = os.path.join(target_directory, target_file_name)
-
-            compress_file(source_file_path, target_file_path)
+            # The new file is named file.huff and the dir is target_dir. we compress it and send it there.
+            
+            compress_file(source_file_path, target_directory)
 
 
-def decompress_foulder():
-    pass
+def decompress_foulder(source, target = None):
+    """
+    Args:
+      source (string): filepath to a foulder to unzip
+      target (string): name of the new foulder.
+    Creates a foulder with the same structure. Files are compressed using huffmans algorithm
+    Outputs: None
+    """
+    if target is None:
+        if source.endswith("archived"):
+            target = source[:-len("archived")]
+        target+='restored'
+
+    for root, _, files in os.walk(source):
+        rel_path = os.path.relpath(root, source)
+        if rel_path == ".":
+            target_dir = target
+        else:
+            target_dir = os.path.join(target, rel_path)
+        os.makedirs(target_dir, exist_ok= True)
+
+        for file in files:
+
+            source_file_path = os.path.join(root, file)
+            target_file_name = file[:-5]
+            print(target_file_name)
+            target_file_path = os.path.join(target_dir, target_file_name)
+
+            decompress_file(source_file_path, target_file_path)   
 
 def _confirm_overwrite(output_path):
     """
@@ -97,3 +126,4 @@ def _confirm_overwrite(output_path):
         response = input(f"Warning! File {output_path} already exists! Do you wish to overwrite it [y/n]? ")
         return response in ['y', 'YES']
     return True     
+
