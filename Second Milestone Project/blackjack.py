@@ -8,10 +8,20 @@ from hand import Hand
 class BlackJack:
 
     def __init__(self, player):
+        """
+        Args:
+          player (Player): The person who is playing the gam
+        Initialize a blackjack object
+        """
         self.deck = Deck()
         self.player = player
 
     def play(self):
+        """
+        Starts a blackjack game sequence.
+        If player has enough balance a game starts. The game loop is Prompt if the player wants to play a game -> placing a bet -> deck shuffles
+        -> game starts -> the loop continues unless user inputs NO.
+        """
         self.deck = Deck()
         self.deck.shuffle_deck()
         
