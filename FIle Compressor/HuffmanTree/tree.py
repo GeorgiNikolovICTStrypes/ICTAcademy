@@ -96,7 +96,7 @@ class HuffmanTree:
         Converts the tree to a byte string.
         """
         bits = [] # Here we save the encoding of each of the nodes internal nodes are denoted with 0 while the other nodes are denoted with 1 followed by the char code in binary
-        def _serialize_helper(temp):
+        def serialize_helper(temp):
             if temp is None:
                 return
             if temp.character is not None:
@@ -106,11 +106,11 @@ class HuffmanTree:
                 return 
             
             bits.append('0') # this is an internal node just add 0 and traverse left and right
-            _serialize_helper(temp.left)
-            _serialize_helper(temp.right)
+            serialize_helper(temp.left)
+            serialize_helper(temp.right)
 
         
-        _serialize_helper(self.root)
+        serialize_helper(self.root)
         bit_string = "".join(b for b in bits)
         byte_string, _ = self.bitstring_to_bytestring(bit_string)
         return byte_string
@@ -121,7 +121,7 @@ class HuffmanTree:
         Converts the tree to a byte string.
         """
         bytes_string = b"" # Here we save the encoding of each of the nodes internal nodes are denoted with 0 while the other nodes are denoted with 1 followed by the char code in binary
-        def _serializeutf_helper(temp):
+        def serializeutf_helper(temp):
             nonlocal bytes_string
             if temp is None:
                 return
@@ -136,9 +136,9 @@ class HuffmanTree:
                 return 
             
             bytes_string+= (0).to_bytes(1, byteorder='big') # this is an internal node just add 0 and traverse left and right
-            _serializeutf_helper(temp.left)
-            _serializeutf_helper(temp.right)
-        _serializeutf_helper(self.root)
+            serializeutf_helper(temp.left)
+            serializeutf_helper(temp.right)
+        serializeutf_helper(self.root)
         return bytes_string    
     @classmethod
     def deserialize(cls, bytes):
@@ -250,6 +250,7 @@ class HuffmanTree:
 
         byte_string = bytes(int(bitstring[i:i+8],2) for i in range(0,len(bitstring),8))
         return byte_string, padding
+    
     @staticmethod
     def bytestring_to_bitstring(bytestring):
         """
