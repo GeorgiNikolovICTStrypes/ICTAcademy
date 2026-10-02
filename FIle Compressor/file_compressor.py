@@ -9,14 +9,14 @@ def compress_file(file_path, destination):
     Compresses a file in file_path using huffmans algorithm and writes it to destination
     """
     data = ""
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf-8') as f:
         for line in f.read():
             data += line
 
     huff_tree = HuffmanTree(data = data)
     binary_data = huff_tree.convert_to_huffman_code()
     body, body_padding = huff_tree.bitstring_to_bytestring(binary_data)
-    header = huff_tree.serialize()
+    header = huff_tree.serializeutf()
     header_len = len(header).to_bytes(2, byteorder='big')
     
     padding_byte = body_padding.to_bytes(1, byteorder='big')
@@ -45,7 +45,7 @@ def decompress_file(file_path, destination):
     header_bytes = file_bytes[2:2+header_len]
     padding_count = file_bytes[2+header_len]
     body = file_bytes[2+header_len+1:]
-    tree = HuffmanTree.deserialize(header_bytes)
+    tree = HuffmanTree.deserializeutf(header_bytes)
     body_bit_string = tree.bytestring_to_bitstring(body)
 
     if padding_count>0:
@@ -53,7 +53,7 @@ def decompress_file(file_path, destination):
 
     original_text = tree.convert_to_string(body_bit_string)
     if _confirm_overwrite(destination):
-        with open(destination, 'w') as file:
+        with open(destination, 'w', encoding='utf-8') as file:
             file.write(original_text)
 
 def compress_foulder(source, target = None):
@@ -127,3 +127,4 @@ def _confirm_overwrite(output_path):
         return response in ['y', 'YES']
     return True     
 
+decompress_foulder("C:\\Users\\GeorgiNikolov\\Desktop\\Academy\\Python Repo\\ICTAcademy\\File Compressor\\test_archived")

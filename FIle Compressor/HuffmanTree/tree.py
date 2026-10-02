@@ -101,7 +101,7 @@ class HuffmanTree:
                 return
             if temp.character is not None:
                 bits.append('1') # add the 1
-                char_code = ord(temp.character) if isinstance(temp.character, str) else temp.character # get the char code else if its not a string get the character
+                char_code = ord(temp.character) # get the char code
                 bits.append(f"{char_code:08b}") # convert it to binary
                 return 
             
@@ -114,7 +114,32 @@ class HuffmanTree:
         bit_string = "".join(b for b in bits)
         byte_string, _ = self.bitstring_to_bytestring(bit_string)
         return byte_string
-        
+
+
+    def serializeutf(self):
+        """
+        Converts the tree to a byte string.
+        """
+        bytes_string = b"" # Here we save the encoding of each of the nodes internal nodes are denoted with 0 while the other nodes are denoted with 1 followed by the char code in binary
+        def _serializeutf_helper(temp):
+            nonlocal bytes_string
+            if temp is None:
+                return
+            if temp.character is not None:
+                
+                bytes_string+=(1).to_bytes(1,byteorder='big') # add the 1
+                char_code = temp.character.encode('utf-8') # get the char code 
+                char_len = len(char_code).to_bytes(1,byteorder='big')
+                char_encode = char_len+char_code
+            
+                bytes_string+=char_encode # convert it to binary
+                return 
+            
+            bytes_string+= (0).to_bytes(1, byteorder='big') # this is an internal node just add 0 and traverse left and right
+            _serializeutf_helper(temp.left)
+            _serializeutf_helper(temp.right)
+        _serializeutf_helper(self.root)
+        return bytes_string    
     @classmethod
     def deserialize(cls, bytes):
         """
@@ -150,6 +175,30 @@ class HuffmanTree:
         # we create a new root and return a new instance with the root set to out deserialized helper output
         root = deserialize_helper()
         return cls(root = root)
+    
+    @classmethod
+    def deserializeutf(cls, byte_string):
+        cursor = 0
+
+        def helper():
+            nonlocal cursor
+            flag = byte_string[cursor]
+            cursor+=1
+            if flag == 0:
+                node = HuffmanNode()
+                node.left = helper()
+                node.right = helper()
+                return node
+            else:
+                char_len = byte_string[cursor]
+                cursor+=1
+                char_bytes = byte_string[cursor: cursor+char_len]
+                cursor+=char_len
+                character = char_bytes.decode('utf-8')
+
+                return HuffmanNode(character=character)
+        root = helper()
+        return cls(root = root) 
 
     def convert_to_huffman_code(self):
         """
@@ -175,11 +224,12 @@ class HuffmanTree:
         current_node = self.root
 
         for bit in bit_str:
+            
             if bit == '0':
                 current_node = current_node.left
             else:
                 current_node = current_node.right
-            
+                
             if current_node.character is not None:
                 decoded_chars += current_node.character
                 current_node = self.root
@@ -211,16 +261,17 @@ class HuffmanTree:
         return bitstring
         
 if __name__ == '__main__':
-    data = "aaaaabbbbbbbbbccccccccccccdddddddddddddeeeeeeeeeeeeeeeefffffffffffffffffffffffffffffffffffffffffffff"
+    data = "аасешчешчешеаадашдшадшаешеаешаешаеашеаешаеа\nHELLO\nTHIS IS ME im UNDER WATER"
     tree = HuffmanTree(data = data)
 
-    print(tree.serialize())
-    tree_deserialized = HuffmanTree.deserialize(b'Y\x8b\x1d\x90\xb0\xd8\xac\xa0\x00')
-
+    serialization = tree.serializeutf()
+    print(serialization)
     print(tree.get_codes())
-    print(tree.convert_to_huffman_code())
-    print(tree_deserialized.get_codes())
+    tree_deserialized = HuffmanTree.deserializeutf(serialization)
+    print(tree.get_codes())
+    #print(tree.convert_to_huffman_code())
+    #print(tree_deserialized.get_codes())
 
 
-    print(tree.convert_to_string('01100100'))
+    #print(tree_deserialized.convert_to_string('00001111110110101100011101011000111010111000001001100101100111010010011101001101011100011010100110101001100010111000110101001100001101100100111010110101111111000110111110110010111100011001110111100011001110100000011111100100011000011110010000111110101001101110101011100100101111111111101011101010'))
     
