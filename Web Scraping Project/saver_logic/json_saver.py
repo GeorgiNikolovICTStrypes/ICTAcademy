@@ -1,7 +1,7 @@
 
-from base_saver import Saver
+from .base_saver import Saver
 import json
-from book_scraper import BookScraper
+from scraping_logic.quotes_scraper import QuoteScraper
 
 class JSONSaver(Saver):
     @staticmethod
@@ -36,8 +36,9 @@ class JSONSaver(Saver):
         print(f"Data successfuly saved to {file_path}. {records} records were added. ")
 
 if __name__  == '__main__':
-    scraper = BookScraper
-    with scraper() as scr:
-        data = scr.fetch_info_for_books_with_rating(6)
+   
+    scraper2 = QuoteScraper
+    with scraper2() as scr:
+        data = scr.fetch_authors()
         saver = JSONSaver()
-        saver.save(data, 'C:\\Users\\GeorgiNikolov\\Desktop\\Academy\\Python Repo\\ICTAcademy\\Web Scraping Project\\test_save.json', ['book_title', 'book_url', 'book_price', 'book_availability'])
+        saver.save(data, 'C:\\Users\\GeorgiNikolov\\Desktop\\Academy\\Python Repo\\ICTAcademy\\Web Scraping Project\\test_save2.json')

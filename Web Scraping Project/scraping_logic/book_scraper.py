@@ -1,10 +1,14 @@
-from base_scraper import Scraper
+'''
+A webscraper for the website: books.toscrape.com
+'''
+from .base_scraper import Scraper
 
 class BookScraper(Scraper):
     def __init__(self):
         self.index_url = 'https://books.toscrape.com/'
         self.categories_and_nums = None
-    def fetch_info_for_books_with_rating(self, rating):
+
+    def fetch_info_for_books_with_rating(self, rating = None):
         """
         Args:
           rating (int): Number in range 1-5.
@@ -12,10 +16,10 @@ class BookScraper(Scraper):
         Output:
           (list of lists) book info in the format [book_title, book_url, book_pric , book_availability]
         """
-        while not (1 <= rating <= 5):
+        while rating is None or not (1 <= rating <= 5):
             try:
-                rating = int(input("Please enter a vaid number in the range 1-5. "))
-            except:
+                rating = int(input("Please enter a valid number in the range 1-5. "))
+            except TypeError, ValueError:
                 continue
 
         base_rating = ".star-rating."
@@ -36,8 +40,10 @@ class BookScraper(Scraper):
         curr_page = 1
 
         while start_url:
-            print(start_url)
             data = self.fetch_data(start_url)
+            if data is None:
+                print("Scraper couldn't reach the page")
+                return None
             books_in_page = data.select('article.product_pod')
 
             for book in books_in_page:
@@ -71,12 +77,15 @@ class BookScraper(Scraper):
         if self.categories_and_nums is not None:
             return self.categories_and_nums.keys()
         data = self.fetch_data(self.index_url)
+        if data is None:
+                print("Scraper couldn't reach the page")
+                return None        
         table = data.find('ul', {'class': 'nav nav-list'})
         categories = [x.text.strip() for x in table.select('a')]
         self.categories_and_nums = {category: i for category, i in list(zip(categories[1:], range(2,len(categories)+2)))}
         return categories
     
-    def fetch_books_in_category(self, category):
+    def fetch_books_in_category(self, category = None):
         """
         Args:
           category (string): A book category to filter books by
@@ -86,15 +95,21 @@ class BookScraper(Scraper):
         """
         if self.categories_and_nums is None:
             self.fetch_all_categories()
+
+        while category is None or category not in self.categories_and_nums:
+            category = input("Please enter a valid category. ")
+
         num = self.categories_and_nums[category.title()]
         target_url = self.index_url + f'catalogue/category/books/{category.lower()}_{num}/index.html'
         data = self.fetch_data(target_url)
-        
+        if data is None:
+                print("Scraper couldn't reach the page")
+                return None
         books = data.select('.product_pod')
         titles = [book.select_one('h3 > a')['title'] for book in books]
         return titles
         
 if __name__ == '__main__':
     with BookScraper() as scraper:
-        print(scraper.fetch_info_for_books_with_rating(3))
+        print(scraper.fetch_info_for_books_with_rating())
         

@@ -1,5 +1,5 @@
-from base_saver import Saver
-from book_scraper import BookScraper
+from .base_saver import Saver
+from scraping_logic.book_scraper import BookScraper
 
 class TxtSaver(Saver):
     @staticmethod
@@ -27,13 +27,17 @@ class TxtSaver(Saver):
         """
         mode = self._prompt_for_mode()
         records = len(data)
-        data = self._transform(data, fields)
+        data = self._transform(data)
+        
         if self.overwrite_confirmation(file_path=file_path):
-            with open(file=file_path, mode = mode) as file:
-                if fields is not None:
-                    file.write(" ".join(fields)+'\n')
+            with open(file=file_path, mode = mode, encoding='utf-8') as file:
+                if fields is not None and isinstance(fields, (list, tuple)):
+                    fields = " ".join(fields)
+                   
+                file.write(fields + '\n')
+                
                 file.writelines([x + '\n' for x in data])
-        print(f"Data successfuly saved to {file_path}. {records} record were added. ")
+            print(f"Data successfuly saved to {file_path}. {records} record were added. ")
 
 if __name__ == '__main__':
     scraper = BookScraper
@@ -41,4 +45,5 @@ if __name__ == '__main__':
         data = scr.fetch_info_for_books_with_rating(6)
 
         saver = TxtSaver()
-        saver.save(data, 'C:\\Users\\GeorgiNikolov\\Desktop\\Academy\\Python Repo\\ICTAcademy\\Web Scraping Project\\test_save.txt', ['categories'])
+        saver.save(data, 'C:\\Users\\GeorgiNikolov\\Desktop\\Academy\\Python Repo\\ICTAcademy\\Web Scraping Project\\test_save.txt', ['categories', 'ppop', 'waewaea'])
+

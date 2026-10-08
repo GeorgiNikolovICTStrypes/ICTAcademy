@@ -6,7 +6,10 @@ import requests
 import bs4
 
 class Scraper:
-    
+    def __init__(self):
+        self.index_url = None
+        self.session = None
+        
     def connect(self):
         """
         Starts a requests session that is used between different get calls.

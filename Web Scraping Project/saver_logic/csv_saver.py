@@ -1,6 +1,6 @@
-from base_saver import Saver
+from .base_saver import Saver
 import csv
-from basketball_scraper import NBAScraper
+from scraping_logic.basketball_scraper import NBAScraper
 class CSVSaver(Saver):
     @staticmethod
     def _transform(data, fields=None):
@@ -14,7 +14,6 @@ class CSVSaver(Saver):
          data (list of strings)
         """
         if not isinstance(data[0], list):
-            print("HERE")
             data = [[row] for row in data]
             return data
         return data
@@ -30,9 +29,9 @@ class CSVSaver(Saver):
         mode = self._prompt_for_mode()
         records = len(data)
         if self.overwrite_confirmation(file_path=file_path):
-            with open(file_path, mode, encoding= 'utf-8') as file:
+            with open(file_path, mode, encoding= 'utf-8', newline='') as file:
                 data = self._transform(data)
-                print(data)
+                fields = self._transform(fields)
                 csv_writer = csv.writer(file)
                 csv_writer.writerow(fields)
                 csv_writer.writerows(data)
