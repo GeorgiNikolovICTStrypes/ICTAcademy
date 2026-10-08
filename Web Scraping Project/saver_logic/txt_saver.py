@@ -42,8 +42,7 @@ class TxtSaver(Saver):
 if __name__ == '__main__':
     scraper = BookScraper
     with scraper() as scr:
-        data = scr.fetch_info_for_books_with_rating(6)
-
+        data = scr.fetch_info_for_books_with_rating(6)        
         saver = TxtSaver()
-        saver.save(data, 'C:\\Users\\GeorgiNikolov\\Desktop\\Academy\\Python Repo\\ICTAcademy\\Web Scraping Project\\test_save.txt', ['categories', 'ppop', 'waewaea'])
+       
 

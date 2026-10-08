@@ -41,4 +41,4 @@ if __name__  == '__main__':
     with scraper2() as scr:
         data = scr.fetch_authors()
         saver = JSONSaver()
-        saver.save(data, 'C:\\Users\\GeorgiNikolov\\Desktop\\Academy\\Python Repo\\ICTAcademy\\Web Scraping Project\\test_save2.json')
+        

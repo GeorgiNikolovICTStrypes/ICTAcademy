@@ -43,4 +43,4 @@ if __name__ == '__main__':
     with scraper() as scr:
         data = scr.fetch_current_team_roster('LAL')
         saver = CSVSaver()
-        saver.save(data, 'C:\\Users\\GeorgiNikolov\\Desktop\\Academy\\Python Repo\\ICTAcademy\\Web Scraping Project\\test_save.csv', ['Player'])
+        
