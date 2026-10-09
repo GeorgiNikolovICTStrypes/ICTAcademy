@@ -229,7 +229,6 @@ class ScrapingSession:
             extension = "json"
 
         path = name + '.' + extension
-        self.file_locations.append(path)
         return path
 
     def start(self):
@@ -277,7 +276,7 @@ class ScrapingSession:
                 except Exception as e:
                     print(f"An error occurred while saving the data: {e}. Please try again.")
                     file_path = self.prompt_for_file_path()
-
+                self.file_locations.append(file_path)
             print(f'Website scraped: {self.curr_scraper().index_url}\nData types extracted: {self.data_types[-1]}\nNumber of records collected: {len(data)}\nData saved to {file_path}.')
         print(f"Scraping session is over! {len(self.sites_scraped_urls)} URLs were scraped!\nThe sites scraped: {self.sites_scraped_urls}\nThe information was saved to: {self.file_locations}. ")
 
