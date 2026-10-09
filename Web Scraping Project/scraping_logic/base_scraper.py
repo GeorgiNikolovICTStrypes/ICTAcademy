@@ -6,10 +6,17 @@ import requests
 import bs4
 
 class Scraper:
+    '''
+    Base class for all scrapers. Transforms the data fetched from a url into a soup object.
+    Makes the scraper objects context managers to ensure that the session is closed after use.
+    '''
     def __init__(self):
+        '''
+        Initialize an empty Scraper Object.
+        '''
         self.index_url = None
         self.session = None
-        
+
     def connect(self):
         """
         Starts a requests session that is used between different get calls.

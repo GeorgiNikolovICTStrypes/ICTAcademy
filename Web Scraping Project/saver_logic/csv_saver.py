@@ -2,6 +2,9 @@ from .base_saver import Saver
 import csv
 from scraping_logic.basketball_scraper import NBAScraper
 class CSVSaver(Saver):
+    '''
+    A class for saving data to a CSV file. Inherits from the base Saver class.
+    '''
     @staticmethod
     def _transform(data, fields=None):
         """
@@ -28,11 +31,12 @@ class CSVSaver(Saver):
         """
         mode = self._prompt_for_mode()
         records = len(data)
-        if self.overwrite_confirmation(file_path=file_path):
+        if self.overwrite_confirmation(file_path=file_path, mode = mode):
             with open(file_path, mode, encoding= 'utf-8', newline='') as file:
                 data = self._transform(data)
-                fields = self._transform(fields)
                 csv_writer = csv.writer(file)
+                if isinstance(fields, str):
+                    fields = [fields]
                 csv_writer.writerow(fields)
                 csv_writer.writerows(data)
         print(f"Data successfuly saved to {file_path}. {records} rows were added. ")

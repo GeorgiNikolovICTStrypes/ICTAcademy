@@ -4,6 +4,9 @@ import json
 from scraping_logic.quotes_scraper import QuoteScraper
 
 class JSONSaver(Saver):
+    '''
+    A class to save data to JSON file. Inherits from the base Saver class.
+    '''
     @staticmethod
     def _transform(data, fields=None):
         """
@@ -29,7 +32,7 @@ class JSONSaver(Saver):
         """
         mode = self._prompt_for_mode()
         records = len(data)
-        if self.overwrite_confirmation(file_path):
+        if self.overwrite_confirmation(file_path = file_path, mode = mode):
             data = self._transform(data, fields)
             with open(file_path, mode, encoding= 'utf-8') as file:
                 json.dump(data, file, indent = 2)

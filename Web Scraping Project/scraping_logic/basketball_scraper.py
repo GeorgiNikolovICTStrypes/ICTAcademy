@@ -1,10 +1,13 @@
 '''
-A webscraper for the website: basketball-reference.com
+A webscraper to scrape basketball data.
 '''
 from .base_scraper import Scraper
 from datetime import datetime
 
 class NBAScraper(Scraper):
+    '''
+    A webscraper for the website: basketball-reference.com. Inherits from the base Scraper class.
+    '''
     def __init__(self, delay = 5):
         """
         Args:
@@ -98,7 +101,7 @@ class NBAScraper(Scraper):
         abbreviations = [x['href'][7:10] for x in abb_tags]
         self.abbreviations = abbreviations
         
-        return [f'{team} - {abb}' for team, abb in zip(team_names, abbreviations)]
+        return [[team,abb] for team, abb in zip(team_names, abbreviations)]
         
 if __name__ == '__main__':
     with NBAScraper() as scraper:

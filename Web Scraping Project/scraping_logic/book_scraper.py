@@ -1,9 +1,12 @@
 '''
-A webscraper for the website: books.toscrape.com
+A webscraper to scrape book data.
 '''
 from .base_scraper import Scraper
 
 class BookScraper(Scraper):
+    '''
+    A webscraper for the website: books.toscrape.com. Inherits from the base Scraper class.
+    '''
     def __init__(self):
         self.index_url = 'https://books.toscrape.com/'
         self.categories_and_nums = None

@@ -1,9 +1,12 @@
 '''
-A webscraper for the website: quotes.toscrape.com
+A webscraper to scrape data for quotes.
 '''
 from .base_scraper import Scraper
 
 class QuoteScraper(Scraper):
+    '''
+    A webscraper for the website: quotes.toscrape.com. Inherits from the base Scraper class.
+    '''
     def __init__(self):
         self.index_url = "https://quotes.toscrape.com/"
         self._authors = None

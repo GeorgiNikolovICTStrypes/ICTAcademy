@@ -2,6 +2,8 @@ from .base_saver import Saver
 from scraping_logic.book_scraper import BookScraper
 
 class TxtSaver(Saver):
+    '''
+    A class to save data to a text file. Inherits from the base Saver class.'''
     @staticmethod
     def _transform(data, fields = None):
         """
@@ -29,7 +31,7 @@ class TxtSaver(Saver):
         records = len(data)
         data = self._transform(data)
         
-        if self.overwrite_confirmation(file_path=file_path):
+        if self.overwrite_confirmation(file_path=file_path, mode = mode):
             with open(file=file_path, mode = mode, encoding='utf-8') as file:
                 if fields is not None and isinstance(fields, (list, tuple)):
                     fields = " ".join(fields)

@@ -1,6 +1,7 @@
 '''
-A webscrape session manager class. This class handles the user input and output, and manages the scraping session.
+This module implements the ScrapingSession class.
 '''
+
 from .menu_exception import InvalidMenuOption
 from scraping_logic.basketball_scraper import NBAScraper
 from scraping_logic.quotes_scraper import QuoteScraper
@@ -11,7 +12,9 @@ from saver_logic.json_saver import JSONSaver
 import os
 
 class ScrapingSession:
-
+    """
+    A class to manage a web scraping session. It handles user input and output, and manages the scraping session.
+    """
     def __init__(self):
         self.file_locations = []
         self.data_types = []
@@ -20,6 +23,12 @@ class ScrapingSession:
         self.curr_saver = None
 
     def prompt_for_site(self):
+        '''
+        A function to prompt the user for a site to scrape. It displays a menu for the user.
+        Output:
+          (int) -1 for Exit (if user entered 4)
+          (none) None for a valid site to scrape
+        '''
         print('What would u like to scrape?')
         print('\n1. Quotes\n2. Basketball information\n3. Book information\n4. Exit')
         choice = None
@@ -50,6 +59,12 @@ class ScrapingSession:
             return self.prompt_for_site()
 
     def prompt_for_function_quotes(self):
+        '''
+        Prompts the user for a function to scrape from the quotes site. It displays a menu for the user.
+        Output:
+          (int) -1 for Exit (if user entered 4) or 5 for testing faulty url
+          (tuple) (data, fields) for a valid function to scrape
+        '''
         print('What information would u like to scrape about quotes?')
         print('1. Authors\n2. Popular Tags\n3. Quotes on page 1-10\n4. Exit\n5. Test faulty url')
         choice = 0
@@ -57,7 +72,7 @@ class ScrapingSession:
             try:
                 choice = int(input("Choose an option from the list (number). "))
                 break
-            except TypeError:
+            except (ValueError, TypeError):
                 print("Please enter a number from the list! ")
                 continue
         with self.curr_scraper() as scraper:
@@ -75,10 +90,13 @@ class ScrapingSession:
                     data = scraper.fetch_quotes_for_page()
                     return (data, 'Quotes')
                 elif choice == 4:
+                    self.sites_scraped_urls.pop()
                     return -1
                 elif choice == 5:
                     self.data_types.append('Faulty')
                     data = scraper.test_faulty()
+                    # Returns same as exit, because we want the same behaviour as exit.
+                    # Future work: we can add a different behaviour for this case, like saving the error to a log file.
                     return -1
                 else:
                     raise InvalidMenuOption
@@ -87,6 +105,12 @@ class ScrapingSession:
                 return self.prompt_for_function_quotes()
             
     def prompt_for_function_books(self):
+        '''
+        Prompts the user for a function to scrape from the books site. It displays a menu for the user.
+        Output:
+          (int) -1 for Exit (if user entered 4)
+          (tuple) (data, fields) for a valid function to scrape
+        '''
         print('What information would u like to scrape about books?')
         print('1. Book info for books with rating [1-5] \n2. Get book categories\n3. Get book titles in a category\n4. Exit')
         choice = 0
@@ -112,6 +136,7 @@ class ScrapingSession:
                     data = scraper.fetch_books_in_category()
                     return (data, 'Book titles')
                 elif choice == 4:
+                    self.sites_scraped_urls.pop()
                     return -1
                 else:
                     raise InvalidMenuOption
@@ -121,6 +146,12 @@ class ScrapingSession:
             
 
     def prompt_for_function_basketball(self):
+        '''
+        Prompts the user for a function to scrape from the basketball site. It displays a menu for the user.
+        Output:
+          (int) -1 for Exit (if user entered 4)
+          (tuple) (data, fields) for a valid function to scrape
+        '''
         print('What information would u like to scrape about the NBA?')
         print("1. Champions from year to year\n2. Get a team's roster\n3. Get all NBA teams and their abbreviations\n4. Exit")
         choice = 0
@@ -147,6 +178,7 @@ class ScrapingSession:
                     data = scraper.fetch_teams_with_abbreviations()
                     return (data, ['Team Names', 'Abbreviations'])
                 elif choice == 4:
+                    self.sites_scraped_urls.pop()
                     return -1
 
                 else:
@@ -157,6 +189,9 @@ class ScrapingSession:
                 return self.prompt_for_function_basketball()
             
     def prompt_for_save(self):
+        '''
+        Prompts the user for a file format to save the data. It displays a menu for the user.
+        '''
         print("How would you like to save the data?\n1. TXT\n2. CSV\n3. JSON")
         choice = 0
         while True:
@@ -180,6 +215,9 @@ class ScrapingSession:
             return self.prompt_for_save()
 
     def prompt_for_file_path(self):
+        '''
+        Prompts the user for a file path to where they want to save the data.
+        '''
         path = input("Please enter the file path where you want to save the data. ")
         name, _ = os.path.splitext(path)
         extension = ""
@@ -195,6 +233,15 @@ class ScrapingSession:
         return path
 
     def start(self):
+        """
+        Starts a scraping session. It follows the following flow:
+        1. Prompts the user for a site to scrape.
+        2. Prompts the user for a function to scrape from the site.
+        3. Scrapes the data from the site using the selected function.
+        4. Prompts the user for a file format to save the data.
+        5. Saves the data to the specified file format.
+        6. Repeats the process until the user chooses to exit.
+        """
         while True:
             
             data = None
@@ -223,7 +270,8 @@ class ScrapingSession:
             self.prompt_for_save()
             file_path = self.prompt_for_file_path()
             self.curr_saver().save(data, file_path, fields)
-        print(f"Scraping session is over! {len(self.sites_scraped_urls)} URLs were scraped!\nThe sites scraped are: {self.sites_scraped_urls}\nThe information was saved to: {self.file_locations}. ")
+            print(f'Website_scraped = {self.curr_scraper().index_url}\nData types extracted: {self.data_types[-1]}\nNumber of records collected: {len(data)}\nData saved to {file_path}.')
+        print(f"Scraping session is over! {len(self.sites_scraped_urls)} URLs were scraped!\nThe sites scraped: {self.sites_scraped_urls}\nThe information was saved to: {self.file_locations}. ")
 
 if __name__ == '__main__':
     sesh = ScrapingSession()
