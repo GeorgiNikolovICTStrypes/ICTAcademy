@@ -8,12 +8,18 @@ class Saver:
     Base Saver class for all savers.
     '''
     def save(self, data, file_path, fields = None):
+        '''
+        Base method for saving data to a file. Implemented by the child classes.
+        '''
         raise NotImplementedError
-    
+
     @staticmethod
     def _transform(data, fields = None):
+        '''
+        Base method for transforming data to be saved. Implemented by the child classes.
+        '''
         raise NotImplementedError
-    
+
     @staticmethod
     def overwrite_confirmation(file_path, mode):
         """
@@ -37,7 +43,7 @@ class Saver:
                 if answer.lower() in ['n', 'no']:
                     return False
         return True
-    
+
     @staticmethod
     def _prompt_for_mode():
         '''

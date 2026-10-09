@@ -1,6 +1,11 @@
-from .base_saver import Saver
+'''
+This module contains the CSVSaver class.
+'''
 import csv
 from scraping_logic.basketball_scraper import NBAScraper
+from .base_saver import Saver
+
+
 class CSVSaver(Saver):
     '''
     A class for saving data to a CSV file. Inherits from the base Saver class.
@@ -43,8 +48,7 @@ class CSVSaver(Saver):
 
 if __name__ == '__main__':
 
-    scraper = NBAScraper
-    with scraper() as scr:
+    Scraper = NBAScraper
+    with Scraper() as scr:
         data = scr.fetch_current_team_roster('LAL')
         saver = CSVSaver()
-        
