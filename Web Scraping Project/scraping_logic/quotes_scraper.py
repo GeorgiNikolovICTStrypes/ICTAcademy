@@ -24,7 +24,7 @@ class QuoteScraper(Scraper):
         curr_url = self.index_url
         all_authors = set()
         while curr_url:
-            data = self.fetch_data(curr_url)
+            data = self._fetch_data(curr_url)
             if data is None:
                 print("Scraper couldn't reach the page")
                 return None
@@ -57,7 +57,7 @@ class QuoteScraper(Scraper):
             
         if self._tags:
             return self._tags[:n]
-        data = self.fetch_data(self.index_url)
+        data = self._fetch_data(self.index_url)
         if data is None:
             print("Scraper couldn't reach the page")
             return None
@@ -84,7 +84,7 @@ class QuoteScraper(Scraper):
             return self._quotes[page]
         
         url = self.index_url + f"page/{page}"
-        data = self.fetch_data(url)
+        data = self._fetch_data(url)
         if data is None:
             print("Scraper couldn't reach the page")
             return None
@@ -99,7 +99,7 @@ class QuoteScraper(Scraper):
           (list of strings) list containing quotes from page
         """
         url = self.index_url + "ewqneiqwiewqi;ebwq"
-        data = self.fetch_data(url)
+        data = self._fetch_data(url)
         if data is None:
             print("Scraper couldn't reach the page")
             return None

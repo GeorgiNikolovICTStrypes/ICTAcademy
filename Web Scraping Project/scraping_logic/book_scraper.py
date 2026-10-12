@@ -43,7 +43,7 @@ class BookScraper(Scraper):
         curr_page = 1
 
         while start_url:
-            data = self.fetch_data(start_url)
+            data = self._fetch_data(start_url)
             if data is None:
                 print("Scraper couldn't reach the page")
                 return None
@@ -79,7 +79,7 @@ class BookScraper(Scraper):
         """
         if self.categories_and_nums is not None:
             return self.categories_and_nums.keys()
-        data = self.fetch_data(self.index_url)
+        data = self._fetch_data(self.index_url)
         if data is None:
                 print("Scraper couldn't reach the page")
                 return None        
@@ -104,7 +104,7 @@ class BookScraper(Scraper):
 
         num = self.categories_and_nums[category.title()]
         target_url = self.index_url + f'catalogue/category/books/{category.lower()}_{num}/index.html'
-        data = self.fetch_data(target_url)
+        data = self._fetch_data(target_url)
         if data is None:
                 print("Scraper couldn't reach the page")
                 return None

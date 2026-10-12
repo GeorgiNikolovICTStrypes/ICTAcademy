@@ -30,7 +30,7 @@ class Scraper:
         if self.session: 
             self.session.close()
 
-    def fetch_data(self, url):
+    def _fetch_data(self, url):
         """
         Args:
           url (string): A string containing the url to scrape from

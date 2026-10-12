@@ -2,18 +2,19 @@
 This module implements the ScrapingSession class.
 '''
 
-from .menu_exception import InvalidMenuOption
+import os
 from scraping_logic.basketball_scraper import NBAScraper
 from scraping_logic.quotes_scraper import QuoteScraper
 from scraping_logic.book_scraper import BookScraper
 from saver_logic.txt_saver import TxtSaver
 from saver_logic.csv_saver import CSVSaver
 from saver_logic.json_saver import JSONSaver
-import os
+from .menu_exception import InvalidMenuOption
 
 class ScrapingSession:
     """
-    A class to manage a web scraping session. It handles user input and output, and manages the scraping session.
+    A class to manage a web scraping session. Handles user input
+    and output, and manages the scraping session.
     """
     def __init__(self):
         self.file_locations = []
@@ -24,13 +25,14 @@ class ScrapingSession:
 
     def prompt_for_site(self):
         '''
-        A function to prompt the user for a site to scrape. It displays a menu for the user.
+        A function to prompt the user for a site to scrape.
+        Displays a menu for the user.
         Output:
           (int) -1 for Exit (if user entered 4)
           (none) None for a valid site to scrape
         '''
         print('What would u like to scrape?')
-        print('\n1. Quotes\n2. Basketball information\n3. Book information\n4. Exit')
+        print('1. Quotes\n2. Basketball information\n3. Book information\n4. Exit')
         choice = None
         while True:
             try:
@@ -44,7 +46,6 @@ class ScrapingSession:
                 self.curr_scraper = QuoteScraper
                 self.sites_scraped_urls.append(self.curr_scraper().index_url)
             elif choice == 2:
-                
                 self.curr_scraper = NBAScraper
                 self.sites_scraped_urls.append(self.curr_scraper().index_url)
             elif choice == 3:
@@ -144,7 +145,6 @@ class ScrapingSession:
                 print("Please enter a valid option from the list! ")
                 return self.prompt_for_function_books()
             
-
     def prompt_for_function_basketball(self):
         '''
         Prompts the user for a function to scrape from the basketball site. It displays a menu for the user.
@@ -153,7 +153,7 @@ class ScrapingSession:
           (tuple) (data, fields) for a valid function to scrape
         '''
         print('What information would u like to scrape about the NBA?')
-        print("1. Champions from year to year\n2. Get a team's roster\n3. Get all NBA teams and their abbreviations\n4. Exit")
+        print("1. Champions from year to year\n2. Get a team's roster\n3. Get all NBA teams and their abbreviations\n4. Get stats for a player\n5. Exit")
         choice = 0
         while True:
             try:
@@ -178,6 +178,13 @@ class ScrapingSession:
                     data = scraper.fetch_teams_with_abbreviations()
                     return (data, ['Team Names', 'Abbreviations'])
                 elif choice == 4:
+                    self.data_types.append('Player info')
+                    data = scraper.fetch_player_info()
+                    fields = ['Player Name']
+                    fields += ['Career Games', 'Career AVG PPG', 'Career AVG TRB', 'Career AVG AST', 'Career FG%', 'Career FG3%', 'Career FT%', 'Career eFG%']
+                    fields += ['Season Games','Season AVG PPG', 'Season AVG TRB', 'Season AVG AST', 'Season FG%', 'Season FG3%', 'Season FT%', 'Season eFG%']
+                    return (data, fields)
+                elif choice == 5:
                     self.sites_scraped_urls.pop()
                     return -1
 
@@ -266,19 +273,29 @@ class ScrapingSession:
                     continue
                 
             data, fields = data_fields
+            if data is None:
+                print("The scraper couldnt find any_data. Please try again!")
+                self.data_types.pop()
+                self.sites_scraped_urls.pop()
+                continue
             self.prompt_for_save()
             file_path = self.prompt_for_file_path()
-
+            
             while True:
                 try:
                     self.curr_saver().save(data, file_path, fields)
+                    self.file_locations.append(file_path)
                     break
+                except TypeError:
+                    print(f'No data to save')
                 except Exception as e:
                     print(f"An error occurred while saving the data: {e}. Please try again.")
                     file_path = self.prompt_for_file_path()
-                self.file_locations.append(file_path)
+
+                
+                
             print(f'Website scraped: {self.curr_scraper().index_url}\nData types extracted: {self.data_types[-1]}\nNumber of records collected: {len(data)}\nData saved to {file_path}.')
-        print(f"Scraping session is over! {len(self.sites_scraped_urls)} URLs were scraped!\nThe sites scraped: {self.sites_scraped_urls}\nThe information was saved to: {self.file_locations}. ")
+        print(f"Scraping session is over! {len(self.sites_scraped_urls)} URLs were scraped!\nData types extracted: {self.data_types}\nThe sites scraped: {self.sites_scraped_urls}\nThe information was saved to: {self.file_locations}. ")
 
 if __name__ == '__main__':
     sesh = ScrapingSession()
