@@ -4,6 +4,7 @@ A webscraper to scrape basketball data.
 from .base_scraper import Scraper
 from datetime import datetime
 import time
+
 class NBAScraper(Scraper):
     '''
     A webscraper for the website: basketball-reference.com. Inherits from the base Scraper class.
@@ -37,8 +38,7 @@ class NBAScraper(Scraper):
             except ValueError, TypeError:
                  print("Please enter a valid year! ")
                  continue
-                            
-        
+
         while to_year is None or not (1946 <= to_year <= current_year):
             try:
                 to_year = int(input("Please input a valid to year. We are currently 2026. "))
