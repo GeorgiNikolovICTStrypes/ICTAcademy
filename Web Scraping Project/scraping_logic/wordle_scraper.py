@@ -73,7 +73,7 @@ class WordleScraper(Scraper):
             output_word_with_colors = ''
             if user_word == solution:
                 print(f"You've correctly guessed today's wordle! The answer was {solution}, you solved it in {i+1} tries!")
-                break
+                return [guesses + [solution]]
             for j in range(5):
                 if solution[j]==user_word[j]:
                     output_word_with_colors += Fore.LIGHTGREEN_EX + user_word[j] + Fore.RESET
