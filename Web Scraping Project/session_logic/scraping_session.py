@@ -204,7 +204,7 @@ class ScrapingSession:
         Prompts the user if they would like to play today's wordle.
         Output:
           (int) -1 if the user entered 2 (Exit)
-          (tuple) in format (data , fields) if they entered 1
+          (tuple) (data , fields) if they entered 1
         '''
         print("1. Play today's wordle\n2. Exit")
         choice = 0
@@ -222,7 +222,7 @@ class ScrapingSession:
                     self.data_types.append('Wordle Guesses')
                     data = scraper.play_wordle()
                     return (data, ['Guess 1','Guess 2','Guess 3','Guess 4','Guess 5','Guess 6','Answer'])
-                elif choice == 5:
+                elif choice == 2:
                     self.sites_scraped_urls.pop()
                     return -1
                 else:
@@ -255,7 +255,7 @@ class ScrapingSession:
                 raise InvalidMenuOption
         except InvalidMenuOption:
             print("Please enter a valid option from the list! ")
-            return self.prompt_for_save()
+            self.prompt_for_save()
 
     def prompt_for_file_path(self):
         '''

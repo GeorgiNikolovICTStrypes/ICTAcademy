@@ -1,6 +1,7 @@
 '''
 A webscraper to scrape data for todays wordle
 '''
+
 import csv
 from datetime import date
 from .base_scraper import Scraper
