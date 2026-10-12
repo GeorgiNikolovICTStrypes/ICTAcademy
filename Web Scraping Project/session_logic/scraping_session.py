@@ -6,6 +6,7 @@ import os
 from scraping_logic.basketball_scraper import NBAScraper
 from scraping_logic.quotes_scraper import QuoteScraper
 from scraping_logic.book_scraper import BookScraper
+from scraping_logic.wordle_scraper import WordleScraper
 from saver_logic.txt_saver import TxtSaver
 from saver_logic.csv_saver import CSVSaver
 from saver_logic.json_saver import JSONSaver
@@ -32,7 +33,7 @@ class ScrapingSession:
           (none) None for a valid site to scrape
         '''
         print('What would u like to scrape?')
-        print('1. Quotes\n2. Basketball information\n3. Book information\n4. Exit')
+        print('1. Quotes\n2. Basketball information\n3. Book information\n4. Wordle\n5. Exit')
         choice = None
         while True:
             try:
@@ -52,6 +53,9 @@ class ScrapingSession:
                 self.curr_scraper = BookScraper
                 self.sites_scraped_urls.append(self.curr_scraper().index_url)
             elif choice == 4:
+                self.curr_scraper = WordleScraper
+                self.sites_scraped_urls.append(self.curr_scraper().display_url)
+            elif choice == 5:
                 return -1
             else:
                 raise InvalidMenuOption
@@ -194,7 +198,39 @@ class ScrapingSession:
             except InvalidMenuOption:
                 print("Please enter a valid option from the list! ")
                 return self.prompt_for_function_basketball()
-            
+
+    def prompt_for_wordle(self):
+        '''
+        Prompts the user if they would like to play today's wordle.
+        Output:
+          (int) -1 if the user entered 2 (Exit)
+          (tuple) in format (data , fields) if they entered 1
+        '''
+        print("1. Play today's wordle\n2. Exit")
+        choice = 0
+        while True:
+            try:
+                choice = int(input("Choose an option from the list (number). "))
+                break
+            except ValueError, TypeError:
+                print("Please enter a number from the list! ")
+                continue
+
+        with self.curr_scraper() as scraper:
+            try:
+                if choice == 1:
+                    self.data_types.append('Wordle Guesses')
+                    data = scraper.play_wordle()
+                    return (data, ['Guess 1','Guess 2','Guess 3','Guess 4','Guess 5','Guess 6','Answer'])
+                elif choice == 5:
+                    self.sites_scraped_urls.pop()
+                    return -1
+                else:
+                    raise InvalidMenuOption
+            except InvalidMenuOption:
+                print("Please enter a valid option from the list! ")
+                return self.prompt_for_wordle()
+
     def prompt_for_save(self):
         '''
         Prompts the user for a file format to save the data. It displays a menu for the user.
@@ -271,8 +307,14 @@ class ScrapingSession:
                 data_fields = self.prompt_for_function_books()
                 if data_fields == -1:
                     continue
-                
+
+            elif self.curr_scraper == WordleScraper:
+                data_fields = self.prompt_for_wordle()
+                if data_fields == -1:
+                    continue
+
             data, fields = data_fields
+            print(data)
             if data is None:
                 print("The scraper couldnt find any_data. Please try again!")
                 self.data_types.pop()
