@@ -38,7 +38,17 @@ class Entry:
             total += item.get_cals_for_portion(portion)
         return total
     
-
+    def total_macros(self):
+        total_protein = 0 
+        total_carbs = 0
+        total_fats = 0
+        for item, portion in self.foods_and_meals.items():
+            item_macros = item.get_macros_for_portion(portion)
+            total_protein += item_macros[0]
+            total_carbs += item_macros[1]
+            total_fats += item_macros[2]
+        return (total_protein, total_carbs, total_fats)
+    
 lunch = Entry('Lunch')
 lunch.add_to_entry(Food('pudding',nutrition=Nutrition(200,1,4,5)),5)
 rice = Food('rice', Nutrition(280, 2.7, 50, 0))
@@ -51,3 +61,4 @@ lunch.add_to_entry(meal, 2)
 lunch.add_to_entry(Food('black sludge',nutrition=Nutrition(2121,1,4,5)),1)
 print(lunch)
 print("TOTAL CALS: ", lunch.total_calories())
+print("TOTAL MACROS: ", lunch.total_macros())

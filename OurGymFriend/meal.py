@@ -29,10 +29,20 @@ class Meal:
         ans += self.nutrition.__str__()
         return ans
     
+    def get_macros_for_portion(self, portion = 1):
+        total_protein = 0
+        total_carbs = 0
+        total_fats = 0
+        for ingred, amount in self.ingredients_and_amounts.items():
+            ingred_macros = ingred.get_macros_for_portion(amount)
+            total_protein += ingred_macros[0]
+            total_carbs += ingred_macros[1]
+            total_fats += ingred_macros[2]
+        return (total_protein, total_carbs, total_fats)
+    
     def get_cals_for_portion(self, portion=1 ):
         total_cals = 0
         for ingred, amount in self.ingredients_and_amounts.items():
-            
             total_cals += ingred.get_cals_for_portion(amount)
         return total_cals*portion
 
@@ -41,9 +51,6 @@ class Meal:
         for food, amount in self.ingredients_and_amounts.items():
             ans += food.describe_portion(amount*portion)
         return ans
-
-        
-
     
 if __name__ == '__main__':
     rice = Food('rice', Nutrition(280, 2.7, 50, 0))

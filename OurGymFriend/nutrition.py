@@ -14,9 +14,12 @@ class Nutrition:
     def __str__(self):
         return f"Calories: {self.calories}kcal\nP - {self.protein}g\nC - {self.carbohydrates}g\nF - {self.fats}g\n"
 
-    def describe_portion(self, portion):
+    def describe_portion(self, portion = 1):
         return f"Calories - {round(self.calories*portion,2)}kcal\nP - {round(self.protein*portion,2)}g\nC - {round(self.carbohydrates*portion,2)}g\nF - {round(self.fats*portion,2)}g\n"
-
+    
+    def get_macros_for_portion(self, portion = 1):
+        return(round(self.protein*portion,2), round(self.carbohydrates*portion,2), round(self.fats*portion,2))
+            
     def __eq__(self, other):
         return self.calories == other.calories and self.protein == other.protein and self.carbohydrates == other.carbohydrates and self.fats == other.fats
 
