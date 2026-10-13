@@ -11,7 +11,7 @@ class Day:
     def add_entry(self, entry):
         self._entries.append(entry)
 
-    def get_info_for_day(self, day):
+    def get_info_for_day(self):
         day_cals = 0
         day_protein = 0
         day_carbs = 0 
