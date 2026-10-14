@@ -40,9 +40,9 @@ class Day:
             day_carbs += macros[1]
             day_fats += macros[2]
 
-        res_string = f"Today you hit {day_cals}/{self._daily_calories}. Your macro goals were:\n"
-        res_string += f"Protein: {day_protein}/{self._daily_protein}\n"
-        res_string += f"Carbs: {day_carbs}/{self._daily_carbs}\n"
-        res_string += f"Fats: {day_fats}/{self._daily_fats}\n"
+        res_string = f"Today you hit {day_cals}/{self._calories_goal}. Your macro goals were:\n"
+        res_string += f"Protein: {day_protein}/{self._protein_goal}\n"
+        res_string += f"Carbs: {day_carbs}/{self._carbs_goal}\n"
+        res_string += f"Fats: {day_fats}/{self._fats_goal}\n"
 
         return res_string

@@ -1,4 +1,3 @@
-from collections import namedtuple
 from food import Food
 from meal import Meal
 from nutrition import Nutrition
@@ -42,8 +41,8 @@ class Entry:
         '''
         if item in self.foods_and_meals and self.foods_and_meals[item]>=portion:
             self.foods_and_meals[item] -=portion
-        if self.foods_and_meals[item] == 0:
-            self.foods_and_meals.remove(item)
+        if self.foods_and_meals[item] <= 0:
+            self.foods_and_meals.pop(item)
 
     def __str__(self):
         ans = f"{self.label}\n===========\n"
@@ -65,7 +64,7 @@ class Entry:
             total_protein += item_macros[0]
             total_carbs += item_macros[1]
             total_fats += item_macros[2]
-        return namedtuple((total_protein, total_carbs, total_fats), ['protein','carbs','fats'])
+        return (total_protein, total_carbs, total_fats)
     
 lunch = Entry('Lunch')
 lunch.add_to_entry(Food('pudding',nutrition=Nutrition(200,1,4,5)),5)

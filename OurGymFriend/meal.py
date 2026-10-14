@@ -1,4 +1,3 @@
-from collections import namedtuple
 from nutrition import Nutrition
 from food import Food
 class Meal:
@@ -58,7 +57,7 @@ class Meal:
             total_protein += ingred_macros[0]
             total_carbs += ingred_macros[1]
             total_fats += ingred_macros[2]
-        return namedtuple((total_protein*portion, total_carbs*portion, total_fats*portion), ['protein', 'carbs','fats'])
+        return (total_protein*portion, total_carbs*portion, total_fats*portion)
     
     def get_cals_for_portion(self, portion=1 ):
         '''

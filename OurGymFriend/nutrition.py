@@ -1,4 +1,4 @@
-from collections import namedtuple
+
 class Nutrition:
     def __init__(self, calories = 0, protein = 0, carbohydrates = 0, fats = 0):
         '''
@@ -41,7 +41,7 @@ class Nutrition:
         Output:
           (namedtuple) with fields [protein, carbs, fats]
         '''
-        return namedtuple((round(self.protein*portion,2), round(self.carbohydrates*portion,2), round(self.fats*portion,2)), ['protein','carbs', 'fats'])
+        return (round(self.protein*portion,2), round(self.carbohydrates*portion,2), round(self.fats*portion,2))
             
     def __eq__(self, other):
         return self.calories == other.calories and self.protein == other.protein and self.carbohydrates == other.carbohydrates and self.fats == other.fats
@@ -63,4 +63,5 @@ if __name__ == '__main__':
     nutri1 = Nutrition(200, 1, 5, 1)
     nutri2 = Nutrition(1023 , 5 ,1 ,1)
     nutri3 = nutri1 + nutri2
+    print(nutri3.get_macros_for_portion())
     print(nutri3)
