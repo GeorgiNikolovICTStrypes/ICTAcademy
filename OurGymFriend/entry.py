@@ -1,24 +1,45 @@
+from collections import namedtuple
 from food import Food
 from meal import Meal
 from nutrition import Nutrition
 class Entry:
     def __init__(self, label, foods_and_meals = {}):
+        '''
+        Create an instance of an entry object. It has a name and a list of foods/meals added to that entry.
+        '''
         self.label = label
         self.foods_and_meals = foods_and_meals
 
     def total_calories(self):
+        '''
+        Calculates and returns the calories of the entry
+        Output:
+          (int) Total calories of the entry
+        '''
         total = 0
         for food, portion in self.foods_and_meals.items():
             total += food.get_cals_for_portion(portion)
         return total
 
     def add_to_entry(self, item, portion):
+        '''
+        Args:
+          (int) portion: number of times the item is added 
+          (Food/Meal): The item to add to the entry
+        adds a food or a meal to the entry
+        '''
         if item in self.foods_and_meals:
             self.foods_and_meals[item]+=portion
         else: 
             self.foods_and_meals[item] = portion
 
-    def remove_entry(self, item, portion):
+    def remove_from_entry(self, item, portion):
+        '''
+        Args:
+          (int) portion: number of times the item is added 
+          (Food/Meal): The item to remove to the entry
+        removes a food or meal from the entry
+        '''
         if item in self.foods_and_meals and self.foods_and_meals[item]>=portion:
             self.foods_and_meals[item] -=portion
         if self.foods_and_meals[item] == 0:
@@ -29,16 +50,13 @@ class Entry:
         for item, amount in self.foods_and_meals.items():
             ans += item.describe_portion(amount)
         return ans
-
-    def total_calories(self):
-        total = 0
-        for item, portion in self.foods_and_meals.items():
-            print(portion)
-            
-            total += item.get_cals_for_portion(portion)
-        return total
     
     def total_macros(self):
+        '''
+        Calculates the macros for an entry
+        Output:
+          (namedtuple) with fields ['protein','carbs','fats']
+        '''
         total_protein = 0 
         total_carbs = 0
         total_fats = 0
@@ -47,7 +65,7 @@ class Entry:
             total_protein += item_macros[0]
             total_carbs += item_macros[1]
             total_fats += item_macros[2]
-        return (total_protein, total_carbs, total_fats)
+        return namedtuple((total_protein, total_carbs, total_fats), ['protein','carbs','fats'])
     
 lunch = Entry('Lunch')
 lunch.add_to_entry(Food('pudding',nutrition=Nutrition(200,1,4,5)),5)

@@ -1,3 +1,4 @@
+from collections import namedtuple
 from nutrition import Nutrition
 from food import Food
 class Meal:
@@ -11,12 +12,24 @@ class Meal:
         return sum((ingredient.nutrition*amount for ingredient, amount in self.ingredients_and_amounts.items()), Nutrition())
 
     def add_food(self, ingredient, amount):
+        '''
+        Args:
+          ingredient (Food): Food to add to the meal
+          amount (int): Amount of food to add
+        Adds a food to the meal
+        '''
         if ingredient in self.ingredients_and_amounts:
             self.ingredients_and_amounts += amount
         else:
             self.ingredients_and_amounts[ingredient] = amount
 
     def remove_food(self, ingredient, portion):
+        '''
+        Args:
+          ingredient (Food): Food to remove from the meal
+          portion (int): Amount of food to remove
+        Remove a portion of food from the meal.
+        '''
         if ingredient in self.ingredients_and_amounts and self.ingredients_and_amounts[ingredient]>=portion:
             self.ingredients_and_amounts[ingredient] -=portion
         if self.ingredients_and_amounts[ingredient] == 0:
@@ -30,6 +43,13 @@ class Meal:
         return ans
     
     def get_macros_for_portion(self, portion = 1):
+        '''
+        Args:
+          portion (int): Amount of portions of that meal
+        Return information about macros for a given amount of portions of a meal
+        Output:
+          (namedtuple) with fields [protein, carbs, fats] 
+        '''
         total_protein = 0
         total_carbs = 0
         total_fats = 0
@@ -38,15 +58,29 @@ class Meal:
             total_protein += ingred_macros[0]
             total_carbs += ingred_macros[1]
             total_fats += ingred_macros[2]
-        return (total_protein, total_carbs, total_fats)
+        return namedtuple((total_protein*portion, total_carbs*portion, total_fats*portion), ['protein', 'carbs','fats'])
     
     def get_cals_for_portion(self, portion=1 ):
+        '''
+        Args:
+          portion (int): Number of portions
+        Return information about the calories for a given amount of portions of the meal
+        Output:
+          (int) number of calories for that portion
+        ''' 
         total_cals = 0
         for ingred, amount in self.ingredients_and_amounts.items():
             total_cals += ingred.get_cals_for_portion(amount)
         return total_cals*portion
 
     def describe_portion(self, portion = 1):
+        '''
+        Args:
+          portion (int): Number of portions
+        Return information as a string about a given amount of portions of the meal
+        Output:
+          (string) information about the portion portions of the meal.
+        '''
         ans = f"{portion} of {self.name} contains:\n"
         for food, amount in self.ingredients_and_amounts.items():
             ans += food.describe_portion(amount*portion)
